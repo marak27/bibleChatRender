@@ -1,10 +1,11 @@
 import google.generativeai as genai
-from flask import Flask, jsonify
+from flask import Flask, Blueprint
 import requests
 import base64
 import json
 
-app = Flask(__name__)
+main = Blueprint('main', __name__)
+#app = Flask(__name__)
 
 genai.configure(api_key="AIzaSyAPjctkeCjBluMysPLZxZyJrnJFUi9dJ-M")
 
@@ -64,11 +65,11 @@ chat = model.start_chat(history= mainPromt)
 
 data = []
 
-@app.route('/')
+@main.route('/')
 def home():
     return "Hello Bible enthusiast, add /input/<promt> to chat and add /history to check the history"
 
-@app.route('/input/<promt>', methods=['GET'])
+@main.route('/input/<promt>', methods=['GET'])
 def input(promt):
     response = chat.send_message(promt, stream=True)
     for chunk in response:
@@ -76,7 +77,7 @@ def input(promt):
     temp = ' '.join(data)
     return temp
 
-@app.route('/history', methods=['GET'])
+@main.route('/history', methods=['GET'])
 def history():
     history = chat.history
     hst = history[1:]
